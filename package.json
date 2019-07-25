@@ -1,10 +1,12 @@
 {
   "name": "money-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Create /src/config/js",
   "main": "index.js",
+  "module": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node -r esm ./src/app.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +26,9 @@
     "@alpacahq/alpaca-trade-api": "^1.1.0",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
+    "chalk": "^2.4.2",
     "esm": "^3.2.25",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0"
   }
 }

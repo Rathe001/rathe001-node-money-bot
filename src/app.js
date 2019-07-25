@@ -1,45 +1,21 @@
-import Alpaca from '@alpacahq/alpaca-trade-api';
-import { throttle } from 'lodash';
-import { config } from 'constants/config';
-import { creds } from 'constants/creds';
+import state from './constants/state';
+import config from './constants/config';
+import client from './constants/client';
+import alpaca from './constants/alpaca';
+import onAccountUpdate from './eventHandlers/onAccountUpdate';
+import onConnect from './eventHandlers/onConnect';
+import onDisconnect from './eventHandlers/onDisconnect';
+import onOrderUpdate from './eventHandlers/onOrderUpdate';
+import onStateChange from './eventHandlers/onStateChange';
+import onStockAggMin from './eventHandlers/onStockAggMin';
+import onStockAggSec from './eventHandlers/onStockAggSec';
+import onStockQuotes from './eventHandlers/onStockQuotes';
+import onStockTrades from './eventHandlers/onStockTrades';
+import processHistory from './utils/processHistory';
+import updateStatus from './utils/updateStatus';
+import analyzeData from './utils/analyzeData';
 
-const alpaca = new Alpaca(creds);
-const client = alpaca.websocket;
-
-let state = {
-  quotes: {},
-};
-
-const onConnect = () => {
-  updateStatus('Connected');
-
-  client.subscribe(['trade_updates', 'account_updates', 'T.FB', 'Q.AAPL', 'A.FB', 'AM.AAPL']);
-};
-
-const onDisconnect = () => updateStatus('Disconnected');
-
-const onStateChange = newState => {};
-
-const onOrderUpdate = data => updateStatus('Order update');
-
-const onAccountUpdate = data => {};
-
-const onStockTrades = (subject, data) => {};
-
-const onStockQuotes = (subject, data) => {
-  state.quotes = {
-    ...state.quotes,
-    [subject]: data,
-  };
-
-  updateStatus('Stock quotes');
-};
-
-const onStockAggSec = (subject, data) => {};
-
-const onStockAggMin = (subject, data) => {};
-
-function start() {
+function connectWebsocket() {
   client.onConnect(onConnect);
   client.onDisconnect(onDisconnect);
   client.onStateChange(onStateChange);
@@ -53,13 +29,51 @@ function start() {
   client.connect();
 }
 
-const updateStatus = throttle(status => {
-  console.clear();
-  Object.keys(state.quotes).forEach(key => {
-    process.stdout.write(`${key}: ${JSON.stringify(state.quotes[key])}\n`);
+function doHistoryLookup() {
+  const historyPromises = [
+    alpaca
+      .getBars('day', config.ticker, {
+        limit: 1,
+      })
+      .then(data => processHistory('day', data)),
+
+    alpaca
+      .getBars('15Min', config.ticker, {
+        limit: 1,
+      })
+      .then(data => processHistory('15min', data)),
+
+    alpaca
+      .getBars('5Min', config.ticker, {
+        limit: 1,
+      })
+      .then(data => processHistory('5min', data)),
+
+    alpaca
+      .getBars('1Min', config.ticker, {
+        limit: 1,
+      })
+      .then(data => processHistory('1min', data)),
+  ];
+
+  Promise.all(historyPromises).then(() => {
+    state.ui = {
+      ...state.ui,
+      ticks: state.ui.ticks + 1,
+    };
+
+    analyzeData();
   });
-  process.stdout.write(`\n`);
-  process.stdout.write(status);
-}, config.throttleDelay);
+
+  setTimeout(doHistoryLookup, config.tick);
+}
+
+function start() {
+  updateStatus('Starting bot...');
+  connectWebsocket();
+  doHistoryLookup();
+}
 
 start();
+
+export default state;
