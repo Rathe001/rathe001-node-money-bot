@@ -1,0 +1,30 @@
+{
+  "name": "money-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rathe001/node-money-bot.git"
+  },
+  "author": "Josh Tummel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rathe001/node-money-bot/issues"
+  },
+  "homepage": "https://github.com/Rathe001/node-money-bot#readme",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "eslint-config": "^0.3.0"
+  },
+  "dependencies": {
+    "@alpacahq/alpaca-trade-api": "^1.1.0",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "esm": "^3.2.25",
+    "lodash": "^4.17.15"
+  }
+}
