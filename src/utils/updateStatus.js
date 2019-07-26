@@ -53,11 +53,13 @@ const updateStatus = throttle(status => {
     process.stdout.write(` 1 day:  $${chalk.red(state.history.day.o)}\n\n`);
   }
 
+  process.stdout.write(`Last tick:  ${state.ui.updated}\n`);
   process.stdout.write(`Ticks:  ${state.ui.ticks}\n`);
   process.stdout.write(`Buys:  ${state.ui.buys} ($${state.ui.buyTotal})\n`);
-  process.stdout.write(`Sells:  ${state.ui.sells} ($${state.ui.sellTotal})\n\n`);
+  process.stdout.write(`Sells:  ${state.ui.sells} ($${state.ui.sellTotal})\n`);
+  process.stdout.write(`Current:  ${state.ui.wallet.length}\n\n`);
 
-  process.stdout.write(`Total:  $${state.ui.buyTotal - state.ui.sellTotal}\n`);
+  process.stdout.write(`Total:  $${state.ui.sellTotal - state.ui.buyTotal}\n`);
 }, config.throttleDelay);
 
 export default updateStatus;

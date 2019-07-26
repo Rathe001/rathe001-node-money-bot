@@ -5,6 +5,7 @@ const state = {
     sells: 0,
     buyTotal: 0,
     sellTotal: 0,
+    updated: null,
     wallet: [],
   },
   quotes: {},

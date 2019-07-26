@@ -57,12 +57,19 @@ function doHistoryLookup() {
   ];
 
   Promise.all(historyPromises).then(() => {
-    state.ui = {
-      ...state.ui,
-      ticks: state.ui.ticks + 1,
+    /*
+    state.quotes = {
+      [`Q.${config.ticker}`]: {
+        bp: 230.75,
+        ap: 206.75,
+      },
     };
+    */
 
-    analyzeData();
+    if (state.quotes[`Q.${config.ticker}`]) {
+      analyzeData();
+      updateStatus('Running...');
+    }
   });
 
   setTimeout(doHistoryLookup, config.tick);

@@ -7,7 +7,7 @@ const onStockQuotes = (subject, data) => {
     [subject]: data,
   };
 
-  updateStatus('Updated quotes');
+  updateStatus('Running...');
 };
 
 export default onStockQuotes;
