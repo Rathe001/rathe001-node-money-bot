@@ -7,6 +7,7 @@ const state = {
     sellTotal: 0,
     updated: null,
     positions: [],
+  },
   quotes: {},
   history: {},
 };
