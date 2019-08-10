@@ -5,5 +5,5 @@ Create /api/constants/creds.js:
 > secretKey: '',
 > paper: true,
 > };
-
-export default creds;
+>
+> export default creds;
