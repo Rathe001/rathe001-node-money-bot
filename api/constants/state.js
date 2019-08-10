@@ -6,22 +6,7 @@ const state = {
     buyTotal: 0,
     sellTotal: 0,
     updated: null,
-    //positions: [],
-    positions: [
-      {
-        sym: 'TEST',
-        cost: 123.45,
-        uuid: Math.random(),
-        date: 'Aug 1',
-      },
-      {
-        sym: 'TEST',
-        cost: 123.42,
-        uuid: Math.random(),
-        date: 'Aug 2',
-      },
-    ],
-  },
+    positions: [],
   quotes: {},
   history: {},
 };
