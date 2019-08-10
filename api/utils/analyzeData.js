@@ -25,7 +25,7 @@ const checkShouldBuy = () => {
 };
 
 const checkShouldSell = stock => {
-  const sellCurrent = state.quotes[ticker].bp;
+  const sellCurrent = (state.quotes[stock.sym] && state.quotes[stock.sym].bp) || 0;
   if (sellCurrent >= stock.cost * config.profitMargin) {
     sellStock(stock);
   }

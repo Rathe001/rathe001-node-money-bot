@@ -61,7 +61,9 @@ const api = app => {
         .then(data => processHistory('1min', data)),
     ];
 
-    Promise.all(historyPromises).then(() => analyzeData());
+    Promise.all(historyPromises)
+      .then(() => analyzeData())
+      .catch(e => console.log(e));
 
     setTimeout(doHistoryLookup, config.tick);
   }
