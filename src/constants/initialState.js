@@ -1,15 +1,15 @@
-const state = {
-  ui: {
+export const initialState = {
+  app: {
     ticks: 0,
     buys: 0,
     sells: 0,
     buyTotal: 0,
     sellTotal: 0,
     updated: null,
-    wallet: [],
+    positions: [],
   },
   quotes: {},
   history: {},
 };
 
-export default state;
+export default initialState;

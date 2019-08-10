@@ -5,8 +5,11 @@
   "main": "index.js",
   "module": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node -r esm ./src/app.js"
+    "start": "react-scripts start",
+    "server": "node -r esm ./server.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "repository": {
     "type": "git",
@@ -20,16 +23,45 @@
   "homepage": "https://github.com/Rathe001/node-money-bot#readme",
   "devDependencies": {
     "@babel/core": "^7.5.5",
-    "eslint-config": "^0.3.0"
+    "eslint-config": "^0.3.0",
+    "eslint-config-airbnb": "^17.1.1",
+    "prettier": "^1.18.2"
   },
   "dependencies": {
     "@alpacahq/alpaca-trade-api": "^1.1.0",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
     "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "helmet": "^3.20.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-jss": "^10.0.0-alpha.23",
+    "react-redux": "^7.1.0",
+    "react-scripts": "3.0.1",
+    "redux": "^4.0.4",
+    "redux-saga": "^1.0.5",
     "uuid": "^3.3.2"
-  }
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:8080"
 }

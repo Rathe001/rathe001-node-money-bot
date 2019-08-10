@@ -1,3 +1,4 @@
+import moment from 'moment';
 import state from './constants/state';
 import config from './constants/config';
 import client from './constants/client';
@@ -12,7 +13,6 @@ import onStockAggSec from './eventHandlers/onStockAggSec';
 import onStockQuotes from './eventHandlers/onStockQuotes';
 import onStockTrades from './eventHandlers/onStockTrades';
 import processHistory from './utils/processHistory';
-import updateStatus from './utils/updateStatus';
 import analyzeData from './utils/analyzeData';
 
 function connectWebsocket() {
@@ -30,6 +30,10 @@ function connectWebsocket() {
 }
 
 function doHistoryLookup() {
+  const currentDate = moment();
+  const startTime = moment('09:30 am', 'HH:mm a');
+  const endTime = moment('04:55 pm', 'HH:mm a');
+
   const historyPromises = [
     alpaca
       .getBars('day', config.ticker, {
@@ -57,26 +61,20 @@ function doHistoryLookup() {
   ];
 
   Promise.all(historyPromises).then(() => {
-    /*
-    state.quotes = {
-      [`Q.${config.ticker}`]: {
-        bp: 230.75,
-        ap: 206.75,
-      },
-    };
-    */
-
-    if (state.quotes[`Q.${config.ticker}`]) {
-      analyzeData();
-      updateStatus('Running...');
+    if (
+      //currentDate.isBetween(startTime, endTime) &&
+      currentDate.weekday() !== 0 &&
+      currentDate.weekday() !== 6
+    ) {
+      if (state.quotes[`Q.${config.ticker}`]) {
+        analyzeData();
+      }
     }
   });
-
   setTimeout(doHistoryLookup, config.tick);
 }
 
 function start() {
-  updateStatus('Starting bot...');
   connectWebsocket();
   doHistoryLookup();
 }
