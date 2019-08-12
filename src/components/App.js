@@ -61,6 +61,7 @@ const App = () => {
       <p>
         Sells: {reduxApp.sells} (${reduxApp.sellTotal.toLocaleString('en-US')})
       </p>
+      <p>Profit: ${reduxApp.profit.toLocaleString('en-US')}</p>
       <h2>Positions ({reduxApp.positions.length}):</h2>
       <div className={classes.flexWrap}>
         {reduxApp.positions.map(position => (

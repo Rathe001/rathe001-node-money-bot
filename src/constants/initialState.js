@@ -5,6 +5,7 @@ export const initialState = {
     sells: 0,
     buyTotal: 0,
     sellTotal: 0,
+    profit: 0,
     updated: null,
     positions: [],
   },
