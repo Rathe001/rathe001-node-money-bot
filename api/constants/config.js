@@ -23,7 +23,7 @@ const config = {
     'SPOT',
   ],
   tick: 10000,
-  profitMargin: 1.05,
+  profitMargin: 1.001,
   maxStocks: 50,
 };
 
