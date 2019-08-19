@@ -18,6 +18,8 @@ const checkShouldBuy = () => {
       buy1min < buy5min &&
       buy5min < buy15min &&
       buy15min < buyDay &&
+      // Only buy if this is the lowest position
+      state.app.positions.filter(p => p.sym === ticker && p.cost < buyCurrent).length === 0 &&
       state.app.positions.length < config.maxStocks
     ) {
       buyStock(ticker);
