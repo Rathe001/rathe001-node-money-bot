@@ -1,4 +1,5 @@
 import moment from 'moment';
+import storage from 'node-persist';
 import config from '../constants/config';
 import state from '../constants/state';
 import buyStock from '../utils/buyStock';
@@ -34,7 +35,7 @@ const checkShouldSell = stock => {
   }
 };
 
-const analyzeData = () => {
+const analyzeData = async () => {
   // Buy?
   checkShouldBuy();
 
@@ -45,6 +46,7 @@ const analyzeData = () => {
 
   state.app.updated = moment().format('MMMM Do YYYY, h:mm:ss a');
   state.app.ticks += 1;
+  await storage.setItem('app', state.app);
 };
 
 export default analyzeData;

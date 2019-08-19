@@ -40,6 +40,7 @@
     "helmet": "^3.20.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "node-persist": "^3.0.5",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-jss": "^10.0.0-alpha.23",

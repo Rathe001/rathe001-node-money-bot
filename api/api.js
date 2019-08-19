@@ -1,4 +1,5 @@
 import moment from 'moment';
+import storage from 'node-persist';
 import state from './constants/state';
 import config from './constants/config';
 import client from './constants/client';
@@ -82,7 +83,12 @@ const api = app => {
     setTimeout(doHistoryLookup, config.tick);
   }
 
-  function start() {
+  async function start() {
+    await storage.init();
+    const persistedApp = await storage.getItem('app');
+    if (persistedApp) {
+      state.app = persistedApp;
+    }
     connectWebsocket();
     doHistoryLookup();
   }
