@@ -15,6 +15,15 @@ import onStockTrades from './eventHandlers/onStockTrades';
 import processHistory from './utils/processHistory';
 import analyzeData from './utils/analyzeData';
 
+function marketOpen() {
+  const format = 'hh:mm:ss';
+  const today = moment();
+  const marketOpen = moment('09:15:00', format);
+  const marketClose = moment('17:00:00', format);
+
+  return today.isBetween(marketOpen, marketClose) && today.weekday() !== 0 && today.weekday() !== 7;
+}
+
 const api = app => {
   function connectWebsocket() {
     client.onConnect(onConnect);
@@ -61,9 +70,14 @@ const api = app => {
         .then(data => processHistory('1min', data)),
     ];
 
-    Promise.all(historyPromises)
-      .then(() => analyzeData())
-      .catch(e => console.log(e));
+    if (marketOpen()) {
+      console.log('Tick...');
+      Promise.all(historyPromises)
+        .then(() => analyzeData())
+        .catch(e => console.log(e));
+    } else {
+      console.log('Waiting for markets to open...');
+    }
 
     setTimeout(doHistoryLookup, config.tick);
   }

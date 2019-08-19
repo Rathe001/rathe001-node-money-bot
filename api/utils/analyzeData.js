@@ -25,8 +25,11 @@ const checkShouldBuy = () => {
 };
 
 const checkShouldSell = stock => {
+  const daysOld = moment().diff(moment(stock.date), 'days');
   const sellCurrent = (state.quotes[stock.sym] && state.quotes[stock.sym].bp) || 0;
-  if (sellCurrent >= stock.cost * config.profitMargin) {
+
+  // Stock should be 24h old to avoid being flagged as a day trader
+  if (daysOld >= 1 && sellCurrent >= stock.cost * (config.profitMargin / daysOld)) {
     sellStock(stock);
   }
 };
