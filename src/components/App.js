@@ -70,17 +70,19 @@ const App = () => {
       </div>
       <h2>Prices:</h2>
       <div className={classes.flexWrap}>
-        {Object.keys(reduxQuotes).map(quote => (
-          <Ticker
-            quote={reduxQuotes[quote]}
-            history={{
-              '1min': reduxHistory['1min'][quote][0],
-              '5min': reduxHistory['5min'][quote][0],
-              '15min': reduxHistory['15min'][quote][0],
-              day: reduxHistory['day'][quote][0],
-            }}
-          />
-        ))}
+        {Object.keys(reduxQuotes)
+          .sort((a, b) => a.localeCompare(b))
+          .map(quote => (
+            <Ticker
+              quote={reduxQuotes[quote]}
+              history={{
+                '1min': reduxHistory['1min'][quote][0],
+                '5min': reduxHistory['5min'][quote][0],
+                '15min': reduxHistory['15min'][quote][0],
+                day: reduxHistory['day'][quote][0],
+              }}
+            />
+          ))}
       </div>
     </div>
   );
