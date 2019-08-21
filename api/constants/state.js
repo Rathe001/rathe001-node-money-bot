@@ -8,6 +8,7 @@ const state = {
     sellTotal: 0,
     updated: null,
     positions: [],
+    status: 'LOADING',
   },
   quotes: {},
   history: {},

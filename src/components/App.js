@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { createUseStyles } from 'react-jss';
 import axios from 'axios';
+import classnames from 'classnames';
 
 import appActions from 'core/app/actions';
 import historyActions from 'core/history/actions';
@@ -21,6 +22,20 @@ const useStyles = createUseStyles({
   flexWrap: {
     display: 'flex',
     flexWrap: 'wrap',
+  },
+  status: {
+    background: 'black',
+    padding: 5,
+    display: 'inline',
+  },
+  running: {
+    color: 'green',
+  },
+  closed: {
+    color: 'yellow',
+  },
+  weekend: {
+    color: 'red',
   },
 });
 
@@ -54,6 +69,17 @@ const App = () => {
   return (
     <div className={classes.app}>
       <h1>Node Money Bot</h1>
+      <p
+        className={classnames(classes.status, {
+          [classes.running]: reduxApp.status === 'RUNNING',
+          [classes.weekend]: reduxApp.status === 'WEEKEND',
+          [classes.closed]: reduxApp.status === 'CLOSED',
+        })}
+      >
+        {`${reduxApp.status === 'RUNNING' ? 'Running...' : ''}
+        ${reduxApp.status === 'CLOSED' ? 'Waiting for markets to open...' : ''}
+        ${reduxApp.status === 'WEEKEND' ? 'Markets closed on weekends...' : ''}`}
+      </p>
       <p>Ticks: {reduxApp.ticks}</p>
       <p>
         Buys: {reduxApp.buys} (${reduxApp.buyTotal.toLocaleString('en-US')})
@@ -74,6 +100,7 @@ const App = () => {
           .sort((a, b) => a.localeCompare(b))
           .map(quote => (
             <Ticker
+              key={quote}
               quote={reduxQuotes[quote]}
               history={{
                 '1min': reduxHistory['1min'][quote][0],

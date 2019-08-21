@@ -25,6 +25,8 @@ const config = {
   tick: 10000,
   profitMargin: 0.005,
   maxStocks: 50,
+  startTime: '09:15:00',
+  stopTime: '17:00:00',
 };
 
 export default config;

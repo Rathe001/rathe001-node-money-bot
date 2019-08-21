@@ -19,8 +19,16 @@ import analyzeData from './utils/analyzeData';
 function marketOpen() {
   const format = 'hh:mm:ss';
   const today = moment();
-  const marketOpen = moment('09:15:00', format);
-  const marketClose = moment('17:00:00', format);
+  const marketOpen = moment(config.startTime, format);
+  const marketClose = moment(config.stopTime, format);
+
+  if (!today.isBetween(marketOpen, marketClose)) {
+    state.app.status = 'CLOSED';
+  }
+
+  if (today.weekday() === 0 || today.weekday() === 7) {
+    state.app.status = 'WEEKEND';
+  }
 
   return today.isBetween(marketOpen, marketClose) && today.weekday() !== 0 && today.weekday() !== 7;
 }
@@ -72,12 +80,10 @@ const api = app => {
     ];
 
     if (marketOpen()) {
-      console.log('Tick...');
+      state.app.status = 'RUNNING';
       Promise.all(historyPromises)
         .then(() => analyzeData())
         .catch(e => console.log(e));
-    } else {
-      console.log('Waiting for markets to open...');
     }
 
     setTimeout(doHistoryLookup, config.tick);
