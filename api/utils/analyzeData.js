@@ -15,13 +15,19 @@ const checkShouldBuy = () => {
       const buyDay = state.history['day'][ticker][0].o;
 
       if (
+        // Low point of the day?
         buyCurrent < buy1min &&
         buy1min < buy5min &&
         buy5min < buy15min &&
         buy15min < buyDay &&
-        // Only buy if this is the lowest position
-        state.app.positions.filter(p => p.sym === ticker && p.cost <= buyCurrent).length === 0 &&
-        state.app.positions.length < config.maxStocks
+        // Lowest current position?
+        state.app.positions.filter(
+          p => p.symbol === ticker && parseFloat(p.cost_basis) <= buyCurrent,
+        ).length === 0 &&
+        // Too many stocks?
+        state.app.positions.length < config.maxStocks &&
+        // Have enough money?
+        state.account.cash > buyCurrent
       ) {
         buyStock(ticker);
       }
@@ -30,11 +36,11 @@ const checkShouldBuy = () => {
 };
 
 const checkShouldSell = stock => {
-  const daysOld = moment().diff(moment(stock.date), 'days');
+  let daysOld = moment().diff(moment(stock.date), 'days');
   const sellCurrent = (state.quotes[stock.sym] && state.quotes[stock.sym].bp) || 0;
 
   // Stock should be 24h old to avoid being flagged as a day trader
-  if (daysOld >= 1 && sellCurrent >= stock.cost * (1 + config.profitMargin / daysOld)) {
+  if (daysOld >= 1 && sellCurrent >= stock.asset_id * (1 + config.profitMargin / daysOld)) {
     sellStock(stock);
   }
 };

@@ -25,12 +25,12 @@ function marketOpen() {
   if (!today.isBetween(marketOpen, marketClose)) {
     state.app.status = 'CLOSED';
   }
-
-  if (today.weekday() === 0 || today.weekday() === 7) {
+  console.log(today.weekday());
+  if (today.weekday() === 6 || today.weekday() === 7) {
     state.app.status = 'WEEKEND';
   }
 
-  return today.isBetween(marketOpen, marketClose) && today.weekday() !== 0 && today.weekday() !== 7;
+  return today.isBetween(marketOpen, marketClose) && today.weekday() !== 6 && today.weekday() !== 7;
 }
 
 const api = app => {
@@ -53,7 +53,7 @@ const api = app => {
     const startTime = moment('09:30 am', 'HH:mm a');
     const endTime = moment('04:55 pm', 'HH:mm a');
 
-    const historyPromises = [
+    const promises = [
       alpaca
         .getBars('day', config.ticker, {
           limit: 1,
@@ -77,14 +77,25 @@ const api = app => {
           limit: 1,
         })
         .then(data => processHistory('1min', data)),
+
+      alpaca.getAccount().then(account => {
+        state.account = account;
+      }),
+
+      // TODO: Update local positions with this data
+      /*
+      alpaca.getPositions().then(positions => {
+        state.app.positions = positions;
+      }),
+      */
     ];
 
-    if (marketOpen()) {
-      state.app.status = 'RUNNING';
-      Promise.all(historyPromises)
-        .then(() => analyzeData())
-        .catch(e => console.log(e));
-    }
+    //if (marketOpen()) {
+    state.app.status = 'RUNNING';
+    Promise.all(promises)
+      .then(() => analyzeData())
+      .catch(e => console.log(e));
+    //}
 
     setTimeout(doHistoryLookup, config.tick);
   }

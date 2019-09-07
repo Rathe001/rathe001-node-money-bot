@@ -47,6 +47,8 @@ const App = () => {
   const reduxHistory = useSelector(state => state.history);
   const reduxQuotes = useSelector(state => state.quotes);
 
+  const positionsTotal = reduxApp.positions.reduce((total, item) => total + item.cost, 0);
+
   async function doUpdate() {
     const rs = await axios.get('/update');
 
@@ -54,7 +56,7 @@ const App = () => {
     dispatch(historyActions.setData(rs.data.history));
     dispatch(quotesActions.setData(rs.data.quotes));
 
-    setTimeout(doUpdate, 1000);
+    setTimeout(doUpdate, 5000);
   }
 
   function startApp() {
@@ -88,7 +90,8 @@ const App = () => {
         Sells: {reduxApp.sells} (${reduxApp.sellTotal.toLocaleString('en-US')})
       </p>
       <p>Profit: ${reduxApp.profit.toLocaleString('en-US')}</p>
-      <h2>Positions ({reduxApp.positions.length}):</h2>
+      <p>Current value: ${positionsTotal.toLocaleString('en-US')}</p>
+      <h2>{reduxApp.positions.length} Positions:</h2>
       <div className={classes.flexWrap}>
         {reduxApp.positions.map(position => (
           <Position key={position.uuid} data={position} />

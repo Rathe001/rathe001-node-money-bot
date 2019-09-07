@@ -1,5 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'react-jss';
+import moment from 'moment';
 
 const useStyles = createUseStyles({
   position: {
@@ -18,12 +19,13 @@ const useStyles = createUseStyles({
 
 const Position = ({ data }) => {
   const classes = useStyles();
+  let daysOld = moment().diff(moment(data.date), 'days');
 
   return (
     <div className={classes.position}>
       <p>{data.sym}</p>
       <p>${data.cost.toLocaleString('en-US')}</p>
-      <p>{data.date}</p>
+      <p>{moment(data.date).format('MM/DD/YYYY h:mm:ss a')}</p>
     </div>
   );
 };
