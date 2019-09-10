@@ -19,13 +19,14 @@ const useStyles = createUseStyles({
 
 const Position = ({ data }) => {
   const classes = useStyles();
-  let daysOld = moment().diff(moment(data.date), 'days');
+  let daysOld = moment().diff(moment(data.filled_at), 'days');
 
   return (
     <div className={classes.position}>
-      <p>{data.sym}</p>
-      <p>${data.cost.toLocaleString('en-US')}</p>
-      <p>{moment(data.date).format('MM/DD/YYYY h:mm:ss a')}</p>
+      <p>{data.symbol}</p>
+      <p>${data.filled_avg_price.toLocaleString('en-US', { currency: 'USD' })}</p>
+      <p>{moment(data.filled_at).format('MM/DD/YYYY h:mm:ss a')}</p>
+      <p>{daysOld} days old</p>
     </div>
   );
 };

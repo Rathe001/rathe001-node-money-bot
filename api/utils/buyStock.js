@@ -6,8 +6,6 @@ import alpaca from '../constants/alpaca';
 
 const buyStock = ticker => {
   const buyCurrent = state.quotes[ticker].ap;
-  state.app.buys += 1;
-  state.app.buyTotal += buyCurrent;
 
   alpaca
     .createOrder({
@@ -15,11 +13,11 @@ const buyStock = ticker => {
       qty: 1,
       side: 'buy',
       type: 'market',
-      time_in_force: 'fok',
+      time_in_force: 'day',
     })
     .then(order => {
-      console.log(`${moment.format()}: Buying ${ticker} for ${buyCurrent}`);
-      state.app.positions.push(order);
+      console.log(`${moment().format()}: ${order.symbol} buy order for ${buyCurrent}`);
+      state.app.buyOrders.push(order);
     });
 };
 

@@ -36,6 +36,8 @@ const state = {
     sellTotal: 0,
     updated: null,
     positions: [],
+    buyOrders: [],
+    sellOrders: [],
     status: 'LOADING',
   },
   quotes: {},

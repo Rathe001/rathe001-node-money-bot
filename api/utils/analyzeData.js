@@ -36,11 +36,18 @@ const checkShouldBuy = () => {
 };
 
 const checkShouldSell = stock => {
-  let daysOld = moment().diff(moment(stock.date), 'days');
-  const sellCurrent = (state.quotes[stock.sym] && state.quotes[stock.sym].bp) || 0;
+  let daysOld = moment().diff(moment(stock.filled_at), 'days');
+  const sellCurrent = (state.quotes[stock.symbol] && state.quotes[stock.symbol].bp) || 0;
 
   // Stock should be 24h old to avoid being flagged as a day trader
-  if (daysOld >= 1 && sellCurrent >= stock.asset_id * (1 + config.profitMargin / daysOld)) {
+  if (
+    sellCurrent &&
+    stock.filled_avg_price
+    /*
+    daysOld >= 1 &&
+    sellCurrent >= parseFloat(stock.filled_avg_price) * (1 + config.profitMargin / daysOld)
+    */
+  ) {
     sellStock(stock);
   }
 };

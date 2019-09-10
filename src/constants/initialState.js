@@ -8,6 +8,8 @@ export const initialState = {
     profit: 0,
     updated: null,
     positions: [],
+    sellOrders: [],
+    buyOrders: [],
   },
   quotes: {},
   history: {},

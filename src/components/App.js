@@ -91,10 +91,25 @@ const App = () => {
       </p>
       <p>Profit: ${reduxApp.profit.toLocaleString('en-US')}</p>
       <p>Current value: ${positionsTotal.toLocaleString('en-US')}</p>
+
+      <h2>{reduxApp.buyOrders.length} Buy Orders:</h2>
+      <div className={classes.flexWrap}>
+        {reduxApp.buyOrders.map(order => (
+          <div>{order.symbol}</div>
+        ))}
+      </div>
+
+      <h2>{reduxApp.sellOrders.length} Sell Orders:</h2>
+      <div className={classes.flexWrap}>
+        {reduxApp.sellOrders.map(order => (
+          <div>{order.symbol}</div>
+        ))}
+      </div>
+
       <h2>{reduxApp.positions.length} Positions:</h2>
       <div className={classes.flexWrap}>
         {reduxApp.positions.map(position => (
-          <Position key={position.uuid} data={position} />
+          <Position key={position.id} data={position} />
         ))}
       </div>
       <h2>Prices:</h2>

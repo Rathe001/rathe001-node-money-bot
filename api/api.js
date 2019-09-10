@@ -25,7 +25,7 @@ function marketOpen() {
   if (!today.isBetween(marketOpen, marketClose)) {
     state.app.status = 'CLOSED';
   }
-  console.log(today.weekday());
+
   if (today.weekday() === 6 || today.weekday() === 7) {
     state.app.status = 'WEEKEND';
   }
@@ -81,21 +81,45 @@ const api = app => {
       alpaca.getAccount().then(account => {
         state.account = account;
       }),
-
-      // TODO: Update local positions with this data
-      /*
-      alpaca.getPositions().then(positions => {
-        state.app.positions = positions;
-      }),
-      */
     ];
 
-    //if (marketOpen()) {
-    state.app.status = 'RUNNING';
-    Promise.all(promises)
-      .then(() => analyzeData())
-      .catch(e => console.log(e));
-    //}
+    if (state.app.buyOrders) {
+      state.app.buyOrders.forEach(({ id }) => {
+        promises.push(
+          alpaca.getOrder(id).then(order => {
+            if (order.status === 'filled') {
+              state.app.positions.push(order);
+              state.app.buys += 1;
+              state.app.buyTotal += parseFloat(order.filled_avg_price);
+              state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
+            }
+          }),
+        );
+      });
+    }
+
+    if (state.app.sellOrders) {
+      state.app.sellOrders.forEach(sellOrder => {
+        promises.push(
+          alpaca.getOrder(sellOrder.id).then(order => {
+            if (order.status === 'filled') {
+              state.app.sells += 1;
+              state.app.sellTotal += parseFloat(order.filled_avg_price);
+              state.app.profit += parseFloat(order.filled_avg_price) - parseFloat(sellOrder.cost);
+
+              state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
+            }
+          }),
+        );
+      });
+    }
+
+    if (marketOpen()) {
+      state.app.status = 'RUNNING';
+      Promise.all(promises)
+        .then(() => analyzeData())
+        .catch(e => console.log(e));
+    }
 
     setTimeout(doHistoryLookup, config.tick);
   }
