@@ -15,7 +15,7 @@ const sellStock = stock => {
     })
     .then(order => {
       console.log(`${moment().format()}: Selling ${order.symbol} for ${sellCurrent}`);
-      state.app.positions = state.app.positions.filter(item => item.id !== order.id);
+      state.app.positions = state.app.positions.filter(item => item.id !== stock.id);
       state.app.sellOrders.push({
         ...order,
         cost: stock.filled_avg_price,

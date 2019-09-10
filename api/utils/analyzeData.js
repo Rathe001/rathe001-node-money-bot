@@ -22,8 +22,10 @@ const checkShouldBuy = () => {
         buy15min < buyDay &&
         // Lowest current position?
         state.app.positions.filter(
-          p => p.symbol === ticker && parseFloat(p.cost_basis) <= buyCurrent,
+          p => p.symbol === ticker && parseFloat(p.filled_avg_price) < buyCurrent,
         ).length === 0 &&
+        // No pending buy orders for this stock
+        state.app.buyOrders.filter(o => o.symbol === ticker).length === 0 &&
         // Too many stocks?
         state.app.positions.length < config.maxStocks &&
         // Have enough money?
@@ -42,11 +44,9 @@ const checkShouldSell = stock => {
   // Stock should be 24h old to avoid being flagged as a day trader
   if (
     sellCurrent &&
-    stock.filled_avg_price
-    /*
+    stock.filled_avg_price &&
     daysOld >= 1 &&
     sellCurrent >= parseFloat(stock.filled_avg_price) * (1 + config.profitMargin / daysOld)
-    */
   ) {
     sellStock(stock);
   }

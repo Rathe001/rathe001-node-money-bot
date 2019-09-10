@@ -24,7 +24,7 @@ const Position = ({ data }) => {
   return (
     <div className={classes.position}>
       <p>{data.symbol}</p>
-      <p>${data.filled_avg_price.toLocaleString('en-US', { currency: 'USD' })}</p>
+      <p>${data.filled_avg_price}</p>
       <p>{moment(data.filled_at).format('MM/DD/YYYY h:mm:ss a')}</p>
       <p>{daysOld} days old</p>
     </div>

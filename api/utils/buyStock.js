@@ -17,7 +17,10 @@ const buyStock = ticker => {
     })
     .then(order => {
       console.log(`${moment().format()}: ${order.symbol} buy order for ${buyCurrent}`);
-      state.app.buyOrders.push(order);
+      state.app.buyOrders.push({
+        ...order,
+        buyCurrent,
+      });
     });
 };
 

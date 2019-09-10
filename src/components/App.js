@@ -47,7 +47,10 @@ const App = () => {
   const reduxHistory = useSelector(state => state.history);
   const reduxQuotes = useSelector(state => state.quotes);
 
-  const positionsTotal = reduxApp.positions.reduce((total, item) => total + item.cost, 0);
+  const positionsTotal = reduxApp.positions.reduce(
+    (total, item) => total + parseFloat(item.filled_avg_price),
+    0,
+  );
 
   async function doUpdate() {
     const rs = await axios.get('/update');
