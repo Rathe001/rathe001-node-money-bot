@@ -29,7 +29,9 @@ const checkShouldBuy = () => {
         // Too many stocks?
         state.app.positions.length < config.maxStocks &&
         // Have enough money?
-        state.account.cash > buyCurrent
+        state.account.cash > buyCurrent &&
+        // Price is down at least 1% for the day
+        (1 - buyCurrent / buyDay) * 100 > 1
       ) {
         buyStock(ticker);
       }
