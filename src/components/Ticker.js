@@ -33,10 +33,22 @@ const useStyles = createUseStyles({
 
 const Ticker = ({ quote, history }) => {
   const classes = useStyles();
+  const percentDailyChange = ((1 - quote.bp / history['day'].o) * -100).toFixed(1);
 
   return (
     <div className={classes.ticker}>
-      <span className={classes.sym}>{quote.sym}</span>
+      <span className={classes.sym}>
+        {quote.sym} (
+        <span
+          className={classnames({
+            [classes.up]: percentDailyChange > 0,
+            [classes.down]: percentDailyChange < 0,
+          })}
+        >
+          {percentDailyChange}%
+        </span>
+        )
+      </span>
       <span className={classes.label}>Current: </span>
       <span
         className={classnames(classes.price, {

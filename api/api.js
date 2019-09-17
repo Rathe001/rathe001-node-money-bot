@@ -26,7 +26,7 @@ function marketOpen() {
     state.app.status = 'CLOSED';
   }
 
-  if (today.weekday() === 6 || today.weekday() === 7) {
+  if (today.weekday() === 0 || today.weekday() === 7) {
     state.app.status = 'WEEKEND';
   }
 

@@ -16,22 +16,21 @@ const checkShouldBuy = () => {
 
       if (
         // Low point of the day?
-        buyCurrent < buy1min &&
-        buy1min < buy5min &&
-        buy5min < buy15min &&
-        buy15min < buyDay &&
-        // Lowest current position?
-        state.app.positions.filter(
-          p => p.symbol === ticker && parseFloat(p.filled_avg_price) < buyCurrent,
-        ).length === 0 &&
-        // No pending buy orders for this stock
-        state.app.buyOrders.filter(o => o.symbol === ticker).length === 0 &&
-        // Too many stocks?
-        state.app.positions.length < config.maxStocks &&
-        // Have enough money?
-        state.account.cash > buyCurrent &&
-        // Price is down at least 1% for the day
-        (1 - buyCurrent / buyDay) * 100 > 1
+        (buyCurrent < buy1min && buy1min < buy5min && buy5min < buy15min && buy15min < buyDay) ||
+        // Or quick recent drop in price
+        (((1 - buyCurrent / buy1min) * 100 > 10 || (1 - buyCurrent / buy5min) * 100 > 10) &&
+          // Lowest current position?
+          state.app.positions.filter(
+            p => p.symbol === ticker && parseFloat(p.filled_avg_price) < buyCurrent,
+          ).length === 0 &&
+          // No pending buy orders for this stock
+          state.app.buyOrders.filter(o => o.symbol === ticker).length === 0 &&
+          // Too many stocks?
+          state.app.positions.length < config.maxStocks &&
+          // Have enough money?
+          state.account.cash > buyCurrent &&
+          // Price is down at least 2% for the day
+          (1 - buyCurrent / buyDay) * 100 > 2)
       ) {
         buyStock(ticker);
       }
