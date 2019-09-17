@@ -20,6 +20,7 @@ const sellStock = stock => {
         ...order,
         cost: stock.filled_avg_price,
       });
+      state.didTransaction = true;
     });
 };
 

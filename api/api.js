@@ -117,7 +117,13 @@ const api = app => {
     if (marketOpen()) {
       state.app.status = 'RUNNING';
       Promise.all(promises)
-        .then(() => analyzeData())
+        .then(() => {
+          analyzeData();
+          if (state.didTransaction) {
+            console.log('\n');
+            state.didTransaction = false;
+          }
+        })
         .catch(e => console.log(e));
     }
 

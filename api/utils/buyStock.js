@@ -21,6 +21,7 @@ const buyStock = ticker => {
         ...order,
         buyCurrent,
       });
+      state.didTransaction = true;
     });
 };
 
