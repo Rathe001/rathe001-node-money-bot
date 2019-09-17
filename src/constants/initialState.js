@@ -13,6 +13,7 @@ export const initialState = {
   },
   quotes: {},
   history: {},
+  account: {},
 };
 
 export default initialState;

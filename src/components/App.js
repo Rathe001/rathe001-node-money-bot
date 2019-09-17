@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import appActions from 'core/app/actions';
 import historyActions from 'core/history/actions';
 import quotesActions from 'core/quotes/actions';
+import accountActions from 'core/account/actions';
 
 import Ticker from 'components/Ticker';
 import Position from 'components/Position';
@@ -46,6 +47,7 @@ const App = () => {
   const reduxApp = useSelector(state => state.app);
   const reduxHistory = useSelector(state => state.history);
   const reduxQuotes = useSelector(state => state.quotes);
+  const reduxAccount = useSelector(state => state.account);
 
   const positionsTotal = reduxApp.positions.reduce(
     (total, item) => total + parseFloat(item.filled_avg_price),
@@ -58,6 +60,7 @@ const App = () => {
     dispatch(appActions.setData(rs.data.app));
     dispatch(historyActions.setData(rs.data.history));
     dispatch(quotesActions.setData(rs.data.quotes));
+    dispatch(accountActions.setData(rs.data.account));
 
     setTimeout(doUpdate, 5000);
   }
@@ -92,6 +95,8 @@ const App = () => {
       <p>
         Sells: {reduxApp.sells} (${reduxApp.sellTotal.toLocaleString('en-US')})
       </p>
+      <p>Cash: ${parseFloat(reduxAccount.cash).toLocaleString('en-US')}</p>
+      <p>Pattern day trader? {reduxAccount.pattern_day_trader ? 'YES' : 'NO'}</p>
       <p>Profit: ${reduxApp.profit.toLocaleString('en-US')}</p>
       <p>Current value: ${positionsTotal.toLocaleString('en-US')}</p>
       <p>Open buy orders: {reduxApp.buyOrders.length}</p>
@@ -99,9 +104,11 @@ const App = () => {
 
       <h2>{reduxApp.positions.length} Positions:</h2>
       <div className={classes.flexWrap}>
-        {reduxApp.positions.map(position => (
-          <Position key={position.id} data={position} />
-        ))}
+        {reduxApp.positions
+          .sort((a, b) => a.symbol.localeCompare(b.symbol))
+          .map(position => (
+            <Position key={position.id} data={position} />
+          ))}
       </div>
       <h2>Prices:</h2>
       <div className={classes.flexWrap}>

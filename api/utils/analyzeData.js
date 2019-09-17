@@ -4,6 +4,15 @@ import config from '../constants/config';
 import state from '../constants/state';
 import buyStock from '../utils/buyStock';
 import sellStock from '../utils/sellStock';
+import {
+  isLowestPosition,
+  isNoPendingBuyOrders,
+  isBelowMaxPositions,
+  isEnoughCash,
+  isDailyPercentageDown,
+  isLowOfTheDay,
+  isLargeRecentDrop,
+} from '../utils/buyConditions';
 
 const checkShouldBuy = () => {
   Object.keys(state.quotes).forEach(ticker => {
@@ -13,24 +22,23 @@ const checkShouldBuy = () => {
       const buy5min = state.history['5min'][ticker][0].o;
       const buy15min = state.history['15min'][ticker][0].o;
       const buyDay = state.history['day'][ticker][0].o;
+      const tickerPositions = state.app.positions.filter(p => p.symbol === ticker);
+      const lowestPosition = tickerPositions.length
+        ? tickerPositions.reduce(
+            (min, p) =>
+              parseFloat(p.filled_avg_price) < min ? parseFloat(p.filled_avg_price) : min,
+            9999,
+          )
+        : 9999;
 
       if (
-        // Low point of the day?
-        (buyCurrent < buy1min && buy1min < buy5min && buy5min < buy15min && buy15min < buyDay) ||
-        // Or quick recent drop in price
-        (((1 - buyCurrent / buy1min) * 100 > 10 || (1 - buyCurrent / buy5min) * 100 > 10) &&
-          // Lowest current position?
-          state.app.positions.filter(
-            p => p.symbol === ticker && parseFloat(p.filled_avg_price) < buyCurrent,
-          ).length === 0 &&
-          // No pending buy orders for this stock
-          state.app.buyOrders.filter(o => o.symbol === ticker).length === 0 &&
-          // Too many stocks?
-          state.app.positions.length < config.maxStocks &&
-          // Have enough money?
-          state.account.cash > buyCurrent &&
-          // Price is down at least 2% for the day
-          (1 - buyCurrent / buyDay) * 100 > 2)
+        isLowestPosition(lowestPosition, buyCurrent) &&
+        isNoPendingBuyOrders(ticker) &&
+        isBelowMaxPositions() &&
+        isEnoughCash(buyCurrent) &&
+        isDailyPercentageDown(buyCurrent, buyDay) &&
+        (isLowOfTheDay(buyCurrent, buy1min, buy5min, buy15min, buyDay) ||
+          isLargeRecentDrop(buyCurrent, buy1min, buy5min))
       ) {
         buyStock(ticker);
       }
