@@ -33,6 +33,7 @@ const checkShouldBuy = () => {
 
       if (
         isLowestPosition(lowestPosition, buyCurrent) &&
+        // or isLoweringTheAverage
         isNoPendingBuyOrders(ticker) &&
         isBelowMaxPositions() &&
         isEnoughCash(buyCurrent) &&
