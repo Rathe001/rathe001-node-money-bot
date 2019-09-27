@@ -13,6 +13,7 @@ import {
   isLowOfTheDay,
   isLargeRecentDrop,
 } from '../utils/buyConditions';
+import { isDayOld, isProfitable } from '../utils/sellConditions';
 
 const checkShouldBuy = () => {
   Object.keys(state.quotes).forEach(ticker => {
@@ -48,16 +49,10 @@ const checkShouldBuy = () => {
 };
 
 const checkShouldSell = stock => {
-  let daysOld = moment().diff(moment(stock.filled_at), 'days');
   const sellCurrent = (state.quotes[stock.symbol] && state.quotes[stock.symbol].bp) || 0;
 
   // Stock should be 24h old to avoid being flagged as a day trader
-  if (
-    sellCurrent &&
-    stock.filled_avg_price &&
-    daysOld >= 1 &&
-    sellCurrent >= parseFloat(stock.filled_avg_price) * (1 + config.profitMargin / daysOld)
-  ) {
+  if (isDayOld(stock) && isProfitable(stock, sellCurrent)) {
     sellStock(stock);
   }
 };
@@ -71,7 +66,6 @@ const analyzeData = async () => {
     checkShouldSell(stock);
   });
 
-  state.app.updated = moment().format('MMMM Do YYYY, h:mm:ss a');
   state.app.ticks += 1;
   await storage.setItem('app', state.app);
 };
