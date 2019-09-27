@@ -92,6 +92,8 @@ const api = app => {
               state.app.buys += 1;
               state.app.buyTotal += parseFloat(order.filled_avg_price);
               state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
+            } else if (order.status === 'canceled') {
+              state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
             }
           }),
         );
@@ -108,6 +110,8 @@ const api = app => {
               state.app.profit += parseFloat(order.filled_avg_price) - parseFloat(sellOrder.cost);
 
               state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
+            } else if (order.status === 'canceled') {
+              state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
             }
           }),
         );
@@ -120,7 +124,7 @@ const api = app => {
         .then(() => {
           analyzeData();
           if (state.didTransaction) {
-            console.log('\n');
+            console.log('');
             state.didTransaction = false;
           }
         })
