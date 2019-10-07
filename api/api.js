@@ -30,7 +30,7 @@ function marketOpen() {
     state.app.status = 'WEEKEND';
   }
 
-  return today.isBetween(marketOpen, marketClose) && today.weekday() !== 6 && today.weekday() !== 7;
+  return today.isBetween(marketOpen, marketClose) && today.weekday() !== 6 && today.weekday() !== 0;
 }
 
 const api = app => {
