@@ -17,20 +17,11 @@ import processHistory from './utils/processHistory';
 import analyzeData from './utils/analyzeData';
 
 function marketOpen() {
-  const format = 'hh:mm:ss';
-  const today = moment();
-  const marketOpen = moment(config.startTime, format);
-  const marketClose = moment(config.stopTime, format);
-
-  if (!today.isBetween(marketOpen, marketClose)) {
+  if (!state.clock.is_open) {
     state.app.status = 'CLOSED';
   }
 
-  if (today.weekday() === 0 || today.weekday() === 7) {
-    state.app.status = 'WEEKEND';
-  }
-
-  return today.isBetween(marketOpen, marketClose) && today.weekday() !== 6 && today.weekday() !== 0;
+  return state.clock.is_open;
 }
 
 const api = app => {
@@ -80,6 +71,10 @@ const api = app => {
 
       alpaca.getAccount().then(account => {
         state.account = account;
+      }),
+
+      alpaca.getClock().then(clock => {
+        state.clock = clock;
       }),
     ];
 

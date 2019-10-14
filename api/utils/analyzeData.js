@@ -40,7 +40,8 @@ const checkShouldBuy = () => {
         isEnoughCash(buyCurrent) &&
         isDailyPercentageDown(buyCurrent, buyDay) &&
         (isLowOfTheDay(buyCurrent, buy1min, buy5min, buy15min, buyDay) ||
-          isLargeRecentDrop(buyCurrent, buy1min, buy5min))
+          isLargeRecentDrop(buyCurrent, buy1min, buy5min) ||
+          tickerPositions.length > 0)
       ) {
         buyStock(ticker);
       }

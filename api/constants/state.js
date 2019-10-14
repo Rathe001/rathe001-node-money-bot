@@ -42,6 +42,12 @@ const state = {
   },
   quotes: {},
   history: {},
+  clock: {
+    timestamp: '',
+    is_open: false,
+    next_open: '',
+    next_close: '',
+  },
 };
 
 export default state;
