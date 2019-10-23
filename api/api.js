@@ -100,9 +100,15 @@ const api = app => {
         promises.push(
           alpaca.getOrder(sellOrder.id).then(order => {
             if (order.status === 'filled') {
+              const amount = parseFloat(order.filled_avg_price) - parseFloat(sellOrder.cost);
+              const date = moment().format('MM-DD-YYYY');
               state.app.sells += 1;
               state.app.sellTotal += parseFloat(order.filled_avg_price);
-              state.app.profit += parseFloat(order.filled_avg_price) - parseFloat(sellOrder.cost);
+              state.app.profit += amount;
+              if (!state.app.profitData[date]) {
+                state.app.profitData[date] = [];
+              }
+              state.app.profitData[date].push(amount);
 
               state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
             } else if (order.status === 'canceled') {

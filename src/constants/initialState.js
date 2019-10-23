@@ -6,6 +6,7 @@ export const initialState = {
     buyTotal: 0,
     sellTotal: 0,
     profit: 0,
+    profitsData: {},
     updated: null,
     positions: [],
     sellOrders: [],

@@ -39,6 +39,7 @@ const state = {
     buyOrders: [],
     sellOrders: [],
     status: 'LOADING',
+    graphData: [],
   },
   quotes: {},
   history: {},
