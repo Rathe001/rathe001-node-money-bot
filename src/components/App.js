@@ -41,8 +41,6 @@ const useStyles = createUseStyles({
     padding: [0, 0, 0, 20],
   },
   status: {
-    background: 'black',
-    padding: 5,
     display: 'inline',
   },
   running: {
@@ -93,15 +91,15 @@ const App = () => {
   return (
     <div className={classes.app}>
       <h1>
-        Node Money Bot{' '}
+        Node Money Bot is{' '}
         <span
           className={classnames(classes.status, {
             [classes.running]: reduxApp.status === 'RUNNING',
-            [classes.weekend]: reduxApp.status === 'WEEKEND',
+            [classes.closed]: reduxApp.status === 'CLOSED',
           })}
         >
-          {`${reduxApp.status === 'RUNNING' ? 'Running...' : ''}
-          ${reduxApp.status === 'CLOSED' ? 'Waiting for markets to open...' : ''}`}
+          {reduxApp.status === 'RUNNING' ? 'running!' : ''}
+          {reduxApp.status === 'CLOSED' ? 'waiting for markets to open...' : ''}
         </span>
       </h1>
       <div className={classes.flexGrid}>
