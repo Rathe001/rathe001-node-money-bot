@@ -5,11 +5,17 @@ import moment from 'moment';
 
 const useStyles = createUseStyles({
   chart: {
+    position: 'relative',
     height: 150,
     width: '100%',
+    flex: 1,
     boxSizing: 'border-box',
-    margin: [25, 0],
+    marginRight: 10,
   },
+  wrapper: {
+    height: '100%',
+    width: '100%',
+  }
 });
 
 const ProfitsChart = ({ profits = {} }) => {
@@ -54,14 +60,16 @@ const ProfitsChart = ({ profits = {} }) => {
   );
   return (
     <div className={classes.chart}>
-      <Chart
-        data={chartData}
-        axes={axes}
-        series={series}
-        focus="auto"
-        primaryCursor
-        secondaryCursor
-      />
+      <div className={classes.wrapper}>
+        <Chart
+          data={chartData}
+          axes={axes}
+          series={series}
+          focus="auto"
+          primaryCursor
+          secondaryCursor
+        />
+      </div>
     </div>
   );
 };

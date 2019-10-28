@@ -28,17 +28,21 @@ const useStyles = createUseStyles({
   flexGrid: {
     display: 'flex',
     flexDirection: 'column',
-    width: 500,
+    width: 400,
     '& > div': {
       display: 'flex',
     },
   },
   label: {
     textAlign: 'right',
+    fontWeight: 700,
     width: 150,
   },
   value: {
-    padding: [0, 0, 0, 20],
+    padding: [0, 0, 0, 10],
+  },
+  h1: {
+    textShadow: '0 0 3px rgba(0, 0, 0, 0.5)',
   },
   status: {
     display: 'inline',
@@ -52,6 +56,9 @@ const useStyles = createUseStyles({
   weekend: {
     color: 'red',
   },
+  dataWrap: {
+    display: 'flex',
+  }
 });
 
 const App = () => {
@@ -90,7 +97,7 @@ const App = () => {
 
   return (
     <div className={classes.app}>
-      <h1>
+      <h1 className={classes.h1}>
         Node Money Bot is{' '}
         <span
           className={classnames(classes.status, {
@@ -102,53 +109,54 @@ const App = () => {
           {reduxApp.status === 'CLOSED' ? 'waiting for markets to open...' : ''}
         </span>
       </h1>
-      <div className={classes.flexGrid}>
-        <div>
-          <div className={classes.label}>Ticks:</div>
-          <div className={classes.value}>{reduxApp.ticks}</div>
-        </div>
-        <div>
-          <div className={classes.label}>Buys:</div>
-          <div className={classes.value}>
-            {reduxApp.buys} (${reduxApp.buyTotal.toLocaleString('en-US')})
+      <div className={classes.dataWrap}>
+        <div className={classes.flexGrid}>
+          <div>
+            <div className={classes.label}>Ticks:</div>
+            <div className={classes.value}>{reduxApp.ticks}</div>
+          </div>
+          <div>
+            <div className={classes.label}>Buys:</div>
+            <div className={classes.value}>
+              {reduxApp.buys} (${reduxApp.buyTotal.toLocaleString('en-US')})
+            </div>
+          </div>
+          <div>
+            <div className={classes.label}>Sells:</div>
+            <div className={classes.value}>
+              {reduxApp.sells} (${reduxApp.sellTotal.toLocaleString('en-US')})
+            </div>
+          </div>
+          <div>
+            <div className={classes.label}>Cash:</div>
+            <div className={classes.value}>
+              ${parseFloat(reduxAccount.cash).toLocaleString('en-US')}
+            </div>
+          </div>
+          <div>
+            <div className={classes.label}>Pattern day trader?</div>
+            <div className={classes.value}>{reduxAccount.pattern_day_trader ? 'YES' : 'NO'}</div>
+          </div>
+          <div>
+            <div className={classes.label}>Profit:</div>
+            <div className={classes.value}>${reduxApp.profit.toLocaleString('en-US')}</div>
+          </div>
+          <div>
+            <div className={classes.label}>Current value:</div>
+            <div className={classes.value}>${positionsTotal.toLocaleString('en-US')}</div>
+          </div>
+          <div>
+            <div className={classes.label}>Open buy orders:</div>
+            <div className={classes.value}>{reduxApp.buyOrders.length}</div>
+          </div>
+          <div>
+            <div className={classes.label}>Open sell orders:</div>
+            <div className={classes.value}>{reduxApp.sellOrders.length}</div>
           </div>
         </div>
-        <div>
-          <div className={classes.label}>Sells:</div>
-          <div className={classes.value}>
-            {reduxApp.sells} (${reduxApp.sellTotal.toLocaleString('en-US')})
-          </div>
-        </div>
-        <div>
-          <div className={classes.label}>Cash:</div>
-          <div className={classes.value}>
-            ${parseFloat(reduxAccount.cash).toLocaleString('en-US')}
-          </div>
-        </div>
-        <div>
-          <div className={classes.label}>Pattern day trader?</div>
-          <div className={classes.value}>{reduxAccount.pattern_day_trader ? 'YES' : 'NO'}</div>
-        </div>
-        <div>
-          <div className={classes.label}>Profit:</div>
-          <div className={classes.value}>${reduxApp.profit.toLocaleString('en-US')}</div>
-        </div>
-        <div>
-          <div className={classes.label}>Current value:</div>
-          <div className={classes.value}>${positionsTotal.toLocaleString('en-US')}</div>
-        </div>
-        <div>
-          <div className={classes.label}>Open buy orders:</div>
-          <div className={classes.value}>{reduxApp.buyOrders.length}</div>
-        </div>
-        <div>
-          <div className={classes.label}>Open sell orders:</div>
-          <div className={classes.value}>{reduxApp.sellOrders.length}</div>
-        </div>
+
+        <ProfitsChart profits={reduxApp.profitData} />
       </div>
-
-      <ProfitsChart profits={reduxApp.profitData} />
-
       <h2>{reduxApp.positions.length} Positions:</h2>
       <div className={classes.flexWrap}>
         {reduxApp.positions
