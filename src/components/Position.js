@@ -45,21 +45,23 @@ const useStyles = createUseStyles({
 const Position = ({ data, quote }) => {
   const classes = useStyles();
   const daysOld = moment().diff(moment(data.filled_at), 'days');
-  const profit = Number(quote) - Number(data.filled_avg_price);
+  const profit = Number(quote) * data.filled_qty - Number(data.filled_avg_price) * data.filled_qty;
   return (
     <div
       className={classnames(classes.position, {
         [classes.new]: daysOld === 0,
       })}
     >
-      <p className={classes.symbol}>{data.symbol}</p>
+      <p className={classes.symbol}>
+        {data.symbol} ({data.filled_qty})
+      </p>
       <p
         className={classnames(classes.profit, {
           [classes.up]: profit > 0,
           [classes.down]: profit < 0,
         })}
       >
-        ${profit.toFixed(2)}
+        ${quote === 0 ? '???' : profit.toFixed(2)}
       </p>
       <p className={classes.daysOld}>
         {daysOld} {daysOld === 1 ? 'day' : 'days'} old

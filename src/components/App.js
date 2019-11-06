@@ -58,7 +58,7 @@ const useStyles = createUseStyles({
   },
   dataWrap: {
     display: 'flex',
-  }
+  },
 });
 
 const App = () => {
@@ -71,7 +71,9 @@ const App = () => {
   const reduxAccount = useSelector(state => state.account);
 
   const positionsTotal = reduxApp.positions.reduce(
-    (total, item) => total + parseFloat(item.filled_avg_price),
+    (total, item) =>
+      total +
+      (reduxQuotes[item.symbol] ? parseFloat(reduxQuotes[item.symbol].bp * item.filled_qty) : 0),
     0,
   );
 
@@ -143,7 +145,9 @@ const App = () => {
           </div>
           <div>
             <div className={classes.label}>Current value:</div>
-            <div className={classes.value}>${positionsTotal.toLocaleString('en-US')}</div>
+            <div className={classes.value}>
+              ${(positionsTotal + Number(reduxAccount.cash)).toLocaleString('en-US')}
+            </div>
           </div>
           <div>
             <div className={classes.label}>Open buy orders:</div>

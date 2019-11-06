@@ -8,7 +8,8 @@ export const isNoPendingBuyOrders = ticker =>
 
 export const isBelowMaxPositions = () => state.app.positions.length < config.maxStocks;
 
-export const isEnoughCash = buyCurrent => state.account.cash > buyCurrent;
+export const isEnoughCash = buyCurrent =>
+  state.account.cash > buyCurrent * (config.normalizedMax / buyCurrent).toFixed(0);
 
 export const isDailyPercentageDown = (buyCurrent, buyDay) => (1 - buyCurrent / buyDay) * 100 > 1.0;
 

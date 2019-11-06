@@ -38,6 +38,7 @@ const state = {
     positions: [],
     buyOrders: [],
     sellOrders: [],
+    profitData: {},
     status: 'LOADING',
     graphData: [],
   },

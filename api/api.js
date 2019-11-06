@@ -83,9 +83,14 @@ const api = app => {
         promises.push(
           alpaca.getOrder(id).then(order => {
             if (order.status === 'filled') {
+              console.log(
+                `${moment().format()}: ${order.symbol} buy order fulfilled for ${
+                  order.filled_avg_price
+                }`,
+              );
               state.app.positions.push(order);
               state.app.buys += 1;
-              state.app.buyTotal += parseFloat(order.filled_avg_price);
+              state.app.buyTotal += parseFloat(order.filled_avg_price * order.filled_qty);
               state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
             } else if (order.status === 'canceled') {
               state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
@@ -100,11 +105,19 @@ const api = app => {
         promises.push(
           alpaca.getOrder(sellOrder.id).then(order => {
             if (order.status === 'filled') {
+              console.log(
+                `${moment().format()}: ${order.symbol} sell order fulfilled for ${
+                  order.filled_avg_price
+                }`,
+              );
               const amount = parseFloat(order.filled_avg_price) - parseFloat(sellOrder.cost);
               const date = moment().format('MM-DD-YYYY');
               state.app.sells += 1;
-              state.app.sellTotal += parseFloat(order.filled_avg_price);
+              state.app.sellTotal += parseFloat(order.filled_avg_price * order.filled_qty);
               state.app.profit += amount;
+              if (!state.app.profitData) {
+                state.app.profitData = {};
+              }
               if (!state.app.profitData[date]) {
                 state.app.profitData[date] = [];
               }

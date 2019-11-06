@@ -8,13 +8,17 @@ const sellStock = stock => {
   alpaca
     .createOrder({
       symbol: stock.symbol,
-      qty: 1,
+      qty: stock.filled_qty,
       side: 'sell',
       type: 'market',
       time_in_force: 'day',
     })
     .then(order => {
-      console.log(`${moment().format()}: Selling ${order.symbol} for ${sellCurrent}`);
+      console.log(
+        `${moment().format()}: ${order.symbol} sell order for ${
+          stock.filled_qty
+        } at ${sellCurrent}`,
+      );
       state.app.positions = state.app.positions.filter(item => item.id !== stock.id);
       state.app.sellOrders.push({
         ...order,
