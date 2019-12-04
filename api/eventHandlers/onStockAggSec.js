@@ -1,3 +1,3 @@
-const onStockAggSec = (subject, data) => {};
+const onStockAggSec = () => {};
 
 export default onStockAggSec;

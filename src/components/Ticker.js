@@ -33,7 +33,7 @@ const useStyles = createUseStyles({
 
 const Ticker = ({ quote, history }) => {
   const classes = useStyles();
-  const percentDailyChange = ((1 - quote.bp / history['day'].o) * -100).toFixed(1);
+  const percentDailyChange = ((1 - quote.ap / history['day'].o) * -100).toFixed(1);
 
   return (
     <div className={classes.ticker}>

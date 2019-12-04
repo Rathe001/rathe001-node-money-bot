@@ -1,3 +1,3 @@
-const onStateChange = newState => {};
+const onStateChange = () => {};
 
 export default onStateChange;

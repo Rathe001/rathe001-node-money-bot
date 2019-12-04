@@ -1,25 +1,26 @@
+import moment from 'moment';
 import state from '../constants/state';
 import alpaca from '../constants/alpaca';
-import moment from 'moment';
 
 const sellStock = stock => {
   const sellCurrent = state.quotes[stock.symbol].bp;
 
   alpaca
     .createOrder({
-      symbol: stock.symbol,
       qty: stock.filled_qty,
       side: 'sell',
-      type: 'market',
+      symbol: stock.symbol,
       time_in_force: 'day',
+      type: 'market',
     })
     .then(order => {
+      // eslint-disable-next-line no-console
       console.log(
         `${moment().format()}: ${order.symbol} sell order for ${
           stock.filled_qty
         } at ${sellCurrent}`,
       );
-      state.app.positions = state.app.positions.filter(item => item.id !== stock.id);
+
       state.app.sellOrders.push({
         ...order,
         cost: stock.filled_avg_price,

@@ -1,3 +1,3 @@
-const onStockAggMin = (subject, data) => {};
+const onStockAggMin = () => {};
 
 export default onStockAggMin;

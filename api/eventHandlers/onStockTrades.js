@@ -1,3 +1,3 @@
-const onStockTrades = (subject, data) => {};
+const onStockTrades = () => {};
 
 export default onStockTrades;

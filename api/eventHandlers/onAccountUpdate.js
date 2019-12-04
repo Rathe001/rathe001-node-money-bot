@@ -1,3 +1,3 @@
-const onAccountUpdate = data => {};
+const onAccountUpdate = () => {};
 
 export default onAccountUpdate;

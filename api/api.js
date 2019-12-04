@@ -40,10 +40,6 @@ const api = app => {
   }
 
   function doHistoryLookup() {
-    const currentDate = moment();
-    const startTime = moment('09:30 am', 'HH:mm a');
-    const endTime = moment('04:55 pm', 'HH:mm a');
-
     const promises = [
       alpaca
         .getBars('day', config.ticker, {
@@ -81,21 +77,27 @@ const api = app => {
     if (state.app.buyOrders) {
       state.app.buyOrders.forEach(({ id }) => {
         promises.push(
-          alpaca.getOrder(id).then(order => {
-            if (order.status === 'filled') {
-              console.log(
-                `${moment().format()}: ${order.symbol} buy order fulfilled for ${
-                  order.filled_avg_price
-                }`,
-              );
-              state.app.positions.push(order);
-              state.app.buys += 1;
-              state.app.buyTotal += parseFloat(order.filled_avg_price * order.filled_qty);
-              state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
-            } else if (order.status === 'canceled') {
-              state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
-            }
-          }),
+          alpaca
+            .getOrder(id)
+            .then(order => {
+              if (order.status === 'filled') {
+                // eslint-disable-next-line no-console
+                console.log(
+                  `${moment().format()}: ${order.symbol} buy order fulfilled for ${
+                    order.filled_avg_price
+                  }`,
+                );
+                state.app.positions.push(order);
+                state.app.buys += 1;
+                state.app.buyTotal += parseFloat(order.filled_avg_price * order.filled_qty);
+                state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
+              } else if (order.status === 'canceled') {
+                state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
+              }
+            })
+            .catch(() => {
+              state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== id);
+            }),
         );
       });
     }
@@ -103,31 +105,39 @@ const api = app => {
     if (state.app.sellOrders) {
       state.app.sellOrders.forEach(sellOrder => {
         promises.push(
-          alpaca.getOrder(sellOrder.id).then(order => {
-            if (order.status === 'filled') {
-              console.log(
-                `${moment().format()}: ${order.symbol} sell order fulfilled for ${
-                  order.filled_avg_price
-                }`,
-              );
-              const amount = parseFloat(order.filled_avg_price) - parseFloat(sellOrder.cost);
-              const date = moment().format('MM-DD-YYYY');
-              state.app.sells += 1;
-              state.app.sellTotal += parseFloat(order.filled_avg_price * order.filled_qty);
-              state.app.profit += amount;
-              if (!state.app.profitData) {
-                state.app.profitData = {};
-              }
-              if (!state.app.profitData[date]) {
-                state.app.profitData[date] = [];
-              }
-              state.app.profitData[date].push(amount);
+          alpaca
+            .getOrder(sellOrder.id)
+            .then(order => {
+              if (order.status === 'filled') {
+                // eslint-disable-next-line no-console
+                console.log(
+                  `${moment().format()}: ${order.symbol} sell order fulfilled for ${
+                    order.filled_avg_price
+                  }`,
+                );
+                const amount = parseFloat(order.filled_avg_price) - parseFloat(sellOrder.cost);
+                const date = moment().format('MM-DD-YYYY');
+                state.app.sells += 1;
+                state.app.sellTotal += parseFloat(order.filled_avg_price * order.filled_qty);
+                state.app.profit += amount;
+                if (!state.app.profitData) {
+                  state.app.profitData = {};
+                }
+                if (!state.app.profitData[date]) {
+                  state.app.profitData[date] = [];
+                }
+                state.app.profitData[date].push(amount);
 
-              state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
-            } else if (order.status === 'canceled') {
-              state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
-            }
-          }),
+                state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
+              } else {
+                state.app.positions.push(sellOrder);
+                state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
+              }
+            })
+            .catch(() => {
+              state.app.positions.push(sellOrder);
+              state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== sellOrder.id);
+            }),
         );
       });
     }
@@ -138,11 +148,12 @@ const api = app => {
         .then(() => {
           analyzeData();
           if (state.didTransaction) {
+            // eslint-disable-next-line no-console
             console.log('');
             state.didTransaction = false;
           }
         })
-        .catch(e => console.log(e));
+        .catch(() => {});
     }
 
     setTimeout(doHistoryLookup, config.tick);

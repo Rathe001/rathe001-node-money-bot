@@ -1,9 +1,7 @@
-import moment from 'moment';
 import storage from 'node-persist';
-import config from '../constants/config';
 import state from '../constants/state';
-import buyStock from '../utils/buyStock';
-import sellStock from '../utils/sellStock';
+import buyStock from './buyStock';
+import sellStock from './sellStock';
 import {
   isLowestPosition,
   isNoPendingBuyOrders,
@@ -12,8 +10,8 @@ import {
   isDailyPercentageDown,
   isLowOfTheDay,
   isLargeRecentDrop,
-} from '../utils/buyConditions';
-import { isDayOld, isProfitable } from '../utils/sellConditions';
+} from './buyConditions';
+import { isDayOld, isProfitable } from './sellConditions';
 
 const checkShouldBuy = () => {
   Object.keys(state.quotes).forEach(ticker => {
@@ -22,7 +20,7 @@ const checkShouldBuy = () => {
       const buy1min = state.history['1min'][ticker][0].o;
       const buy5min = state.history['5min'][ticker][0].o;
       const buy15min = state.history['15min'][ticker][0].o;
-      const buyDay = state.history['day'][ticker][0].o;
+      const buyDay = state.history.day[ticker][0].o;
       const tickerPositions = state.app.positions.filter(p => p.symbol === ticker);
       const lowestPosition = tickerPositions.length
         ? tickerPositions.reduce(
@@ -36,9 +34,8 @@ const checkShouldBuy = () => {
         isLowestPosition(lowestPosition, buyCurrent) &&
         // or isLoweringTheAverage
         isNoPendingBuyOrders(ticker) &&
-        isBelowMaxPositions() &&
+        (isBelowMaxPositions() || isDailyPercentageDown(buyCurrent, buyDay)) &&
         isEnoughCash(buyCurrent) &&
-        isDailyPercentageDown(buyCurrent, buyDay) &&
         (isLowOfTheDay(buyCurrent, buy1min, buy5min, buy15min, buyDay) ||
           isLargeRecentDrop(buyCurrent, buy1min, buy5min) ||
           tickerPositions.length > 0)

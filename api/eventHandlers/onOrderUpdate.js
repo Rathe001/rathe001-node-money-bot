@@ -1,3 +1,3 @@
-const onOrderUpdate = data => {};
+const onOrderUpdate = () => {};
 
 export default onOrderUpdate;
