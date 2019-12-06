@@ -1,4 +1,3 @@
-import moment from 'moment';
 import storage from 'node-persist';
 import state from './constants/state';
 import config from './constants/config';
@@ -45,102 +44,44 @@ const api = app => {
         .getBars('day', config.ticker, {
           limit: 1,
         })
-        .then(data => processHistory('day', data)),
+        .then(data => processHistory('day', data))
+        .catch(() => {}),
 
       alpaca
         .getBars('15Min', config.ticker, {
           limit: 1,
         })
-        .then(data => processHistory('15min', data)),
+        .then(data => processHistory('15min', data))
+        .catch(() => {}),
 
       alpaca
         .getBars('5Min', config.ticker, {
           limit: 1,
         })
-        .then(data => processHistory('5min', data)),
+        .then(data => processHistory('5min', data))
+        .catch(() => {}),
 
       alpaca
         .getBars('1Min', config.ticker, {
           limit: 1,
         })
-        .then(data => processHistory('1min', data)),
+        .then(data => processHistory('1min', data))
+        .catch(() => {}),
 
-      alpaca.getAccount().then(account => {
-        state.account = account;
-      }),
+      alpaca
+        .getAccount()
+        .then(account => {
+          state.account = account;
+        })
+        .catch(() => {}),
 
-      alpaca.getClock().then(clock => {
-        state.clock = clock;
-      }),
+      alpaca
+        .getClock()
+        .then(clock => {
+          state.clock = clock;
+        })
+        .catch(() => {}),
     ];
-
-    if (state.app.buyOrders) {
-      state.app.buyOrders.forEach(({ id }) => {
-        promises.push(
-          alpaca
-            .getOrder(id)
-            .then(order => {
-              if (order.status === 'filled') {
-                // eslint-disable-next-line no-console
-                console.log(
-                  `${moment().format()}: ${order.symbol} buy order fulfilled for ${
-                    order.filled_avg_price
-                  }`,
-                );
-                state.app.positions.push(order);
-                state.app.buys += 1;
-                state.app.buyTotal += parseFloat(order.filled_avg_price * order.filled_qty);
-                state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
-              } else if (order.status === 'canceled') {
-                state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== order.id);
-              }
-            })
-            .catch(() => {
-              state.app.buyOrders = state.app.buyOrders.filter(item => item.id !== id);
-            }),
-        );
-      });
-    }
-
-    if (state.app.sellOrders) {
-      state.app.sellOrders.forEach(sellOrder => {
-        promises.push(
-          alpaca
-            .getOrder(sellOrder.id)
-            .then(order => {
-              if (order.status === 'filled') {
-                // eslint-disable-next-line no-console
-                console.log(
-                  `${moment().format()}: ${order.symbol} sell order fulfilled for ${
-                    order.filled_avg_price
-                  }`,
-                );
-                const amount = parseFloat(order.filled_avg_price) - parseFloat(sellOrder.cost);
-                const date = moment().format('MM-DD-YYYY');
-                state.app.sells += 1;
-                state.app.sellTotal += parseFloat(order.filled_avg_price * order.filled_qty);
-                state.app.profit += amount;
-                if (!state.app.profitData) {
-                  state.app.profitData = {};
-                }
-                if (!state.app.profitData[date]) {
-                  state.app.profitData[date] = [];
-                }
-                state.app.profitData[date].push(amount);
-
-                state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
-              } else {
-                state.app.positions.push(sellOrder);
-                state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== order.id);
-              }
-            })
-            .catch(() => {
-              state.app.positions.push(sellOrder);
-              state.app.sellOrders = state.app.sellOrders.filter(item => item.id !== sellOrder.id);
-            }),
-        );
-      });
-    }
 
     if (marketOpen()) {
       state.app.status = 'RUNNING';

@@ -11,7 +11,7 @@ import {
   isLowOfTheDay,
   isLargeRecentDrop,
 } from './buyConditions';
-import { isDayOld, isProfitable } from './sellConditions';
+import { sellOrderExists, isDayOld, isProfitable } from './sellConditions';
 
 const checkShouldBuy = () => {
   Object.keys(state.quotes).forEach(ticker => {
@@ -46,12 +46,12 @@ const checkShouldBuy = () => {
   });
 };
 
-const checkShouldSell = stock => {
-  const sellCurrent = (state.quotes[stock.symbol] && state.quotes[stock.symbol].bp) || 0;
+const checkShouldSell = position => {
+  const sellCurrent = (state.quotes[position.symbol] && state.quotes[position.symbol].bp) || 0;
 
   // Stock should be 24h old to avoid being flagged as a day trader
-  if (isDayOld(stock) && isProfitable(stock, sellCurrent)) {
-    sellStock(stock);
+  if (!sellOrderExists(position) && isDayOld(position) && isProfitable(position, sellCurrent)) {
+    sellStock(position);
   }
 };
 

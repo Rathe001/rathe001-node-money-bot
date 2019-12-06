@@ -21,10 +21,6 @@ const sellStock = stock => {
         } at ${sellCurrent}`,
       );
 
-      state.app.sellOrders.push({
-        ...order,
-        cost: stock.filled_avg_price,
-      });
       state.didTransaction = true;
     });
 };

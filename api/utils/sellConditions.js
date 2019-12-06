@@ -1,12 +1,15 @@
 import moment from 'moment';
+import state from '../constants/state';
 import config from '../constants/config';
 
-export const isDayOld = stock => moment().diff(moment(stock.filled_at), 'days') >= 1;
+export const isDayOld = position => moment().diff(moment(position.filled_at), 'days') >= 1;
 
-export const isProfitable = (stock, sellCurrent) =>
+export const sellOrderExists = position => !!state.app.sellOrders.find(o => o.id === position.id);
+
+export const isProfitable = (position, sellCurrent) =>
   sellCurrent >=
-  parseFloat(stock.filled_avg_price) *
-    (1 + config.profitMargin / moment().diff(moment(stock.filled_at), 'days'));
+  parseFloat(position.filled_avg_price) *
+    (1 + config.profitMargin / moment().diff(moment(position.filled_at), 'days'));
 
 export default {
   isDayOld,
