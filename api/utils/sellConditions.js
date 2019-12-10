@@ -4,7 +4,7 @@ import config from '../constants/config';
 
 export const isDayOld = position => moment().diff(moment(position.filled_at), 'days') >= 1;
 
-export const sellOrderExists = position => !!state.app.sellOrders.find(o => o.id === position.id);
+export const isNoPendingSellOrders = () => state.sellId === null;
 
 export const isProfitable = (position, sellCurrent) =>
   sellCurrent >=

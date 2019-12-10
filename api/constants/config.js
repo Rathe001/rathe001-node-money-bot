@@ -3,8 +3,7 @@ const config = {
   maxStocks: 5000,
   normalizedMax: 20, // 10 stocks at $4 each, or 1 stock at $40
   profitMargin: 0.01, // 1%
-  throttleDelay: 1000,
-  tick: 10000,
+  tick: 500,
   ticker: [
     'GPRO',
     'F',
@@ -16,12 +15,9 @@ const config = {
     'VIXY',
     'RDFN',
     'KMDA',
-    'YAHOY',
     'PAYS',
-    'INTZ',
     'ELMD',
     'EDAP',
-    'CXDO',
     'JCS',
   ],
 };

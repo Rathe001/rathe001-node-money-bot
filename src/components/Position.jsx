@@ -4,41 +4,41 @@ import moment from 'moment';
 import classnames from 'classnames';
 
 const useStyles = createUseStyles({
-  position: {
-    boxSizing: 'border-box',
-    position: 'relative',
-    width: '10%',
-    margin: [0, -1, -1, 0],
-    border: '1px solid black',
-    padding: 5,
-    boxShadow: '0 0 3px rgba(0, 0, 0, 0.3)',
-
-    '& p': {
-      padding: '0 0 10px 0',
-      margin: 0,
-    },
-  },
-  symbol: {
-    fontWeight: 700,
-  },
   datePrice: {
     fontSize: 10,
     fontStyle: 'italic',
   },
   daysOld: {},
-  profit: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
+  down: {
+    color: 'red',
   },
   new: {
     opacity: 0.3,
   },
+  position: {
+    '& p': {
+      margin: 0,
+      padding: '0 0 10px 0',
+    },
+    border: '1px solid black',
+    boxShadow: '0 0 3px rgba(0, 0, 0, 0.3)',
+    boxSizing: 'border-box',
+    margin: [0, -1, -1, 0],
+    padding: 5,
+    position: 'relative',
+
+    width: '10%',
+  },
+  profit: {
+    position: 'absolute',
+    right: 5,
+    top: 5,
+  },
+  symbol: {
+    fontWeight: 700,
+  },
   up: {
     color: 'green',
-  },
-  down: {
-    color: 'red',
   },
 });
 

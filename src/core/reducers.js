@@ -1,14 +1,15 @@
-import { combineReducers } from 'redux';
-import app from 'core/app/reducers';
-import history from 'core/history/reducers';
-import quotes from 'core/quotes/reducers';
-import account from 'core/account/reducers';
+import actions from './actions';
 
-const appReducer = combineReducers({
-  app,
-  history,
-  quotes,
-  account,
-});
+const reducer = (state = {}, action) => {
+  switch (action.type) {
+    case actions.SET_DATA:
+      return {
+        ...action.payload,
+      };
 
-export default (state, action) => appReducer(state, action);
+    default:
+      return state;
+  }
+};
+
+export default (state, action) => reducer(state, action);

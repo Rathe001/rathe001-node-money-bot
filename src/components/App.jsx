@@ -4,10 +4,7 @@ import { createUseStyles } from 'react-jss';
 import axios from 'axios';
 import classnames from 'classnames';
 
-import appActions from 'core/app/actions';
-import historyActions from 'core/history/actions';
-import quotesActions from 'core/quotes/actions';
-import accountActions from 'core/account/actions';
+import appActions from 'core/actions';
 
 import Ticker from 'components/Ticker';
 import Position from 'components/Position';
@@ -21,43 +18,43 @@ const useStyles = createUseStyles({
     },
   },
   app: {},
+  closed: {
+    color: 'yellow',
+  },
+  dataWrap: {
+    display: 'flex',
+  },
+  flexGrid: {
+    '& > div': {
+      display: 'flex',
+    },
+    display: 'flex',
+    flexDirection: 'column',
+    width: 400,
+  },
   flexWrap: {
     display: 'flex',
     flexWrap: 'wrap',
   },
-  flexGrid: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: 400,
-    '& > div': {
-      display: 'flex',
-    },
-  },
-  label: {
-    textAlign: 'right',
-    fontWeight: 700,
-    width: 150,
-  },
-  value: {
-    padding: [0, 0, 0, 10],
-  },
   h1: {
     textShadow: '0 0 3px rgba(0, 0, 0, 0.5)',
   },
-  status: {
-    display: 'inline',
+  label: {
+    fontWeight: 700,
+    textAlign: 'right',
+    width: 150,
   },
   running: {
     color: 'green',
   },
-  closed: {
-    color: 'yellow',
+  status: {
+    display: 'inline',
+  },
+  value: {
+    padding: [0, 0, 0, 10],
   },
   weekend: {
     color: 'red',
-  },
-  dataWrap: {
-    display: 'flex',
   },
 });
 
@@ -65,27 +62,23 @@ const App = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const reduxApp = useSelector(state => state.app);
-  const reduxHistory = useSelector(state => state.history);
-  const reduxQuotes = useSelector(state => state.quotes);
-  const reduxAccount = useSelector(state => state.account);
+  const reduxApp = useSelector(state => state);
 
-  const positionsTotal = reduxApp.positions.reduce(
+  const positionsTotal = reduxApp.orders.reduce(
     (total, item) =>
       total +
-      (reduxQuotes[item.symbol] ? parseFloat(reduxQuotes[item.symbol].bp * item.filled_qty) : 0),
+      (reduxApp.quotes.current[item.symbol]
+        ? parseFloat(reduxApp.quotes.current[item.symbol].bp * item.filled_qty)
+        : 0),
     0,
   );
 
   async function doUpdate() {
     const rs = await axios.get('/update');
 
-    dispatch(appActions.setData(rs.data.app));
-    dispatch(historyActions.setData(rs.data.history));
-    dispatch(quotesActions.setData(rs.data.quotes));
-    dispatch(accountActions.setData(rs.data.account));
+    dispatch(appActions.setData(rs.data));
 
-    setTimeout(doUpdate, 5000);
+    setTimeout(doUpdate, 1000);
   }
 
   function startApp() {
@@ -120,72 +113,86 @@ const App = () => {
           <div>
             <div className={classes.label}>Buys:</div>
             <div className={classes.value}>
-              {reduxApp.buys} (${reduxApp.buyTotal.toLocaleString('en-US')})
+              {reduxApp.data.buys.length} ($
+              {reduxApp.data.buys
+                .reduce((acc, item) => acc + item.value, 0)
+                .toLocaleString('en-US')}
+              )
             </div>
           </div>
           <div>
             <div className={classes.label}>Sells:</div>
             <div className={classes.value}>
-              {reduxApp.sells} (${reduxApp.sellTotal.toLocaleString('en-US')})
+              {reduxApp.data.sells.length} ($
+              {reduxApp.data.sells
+                .reduce((acc, item) => acc + item.value, 0)
+                .toLocaleString('en-US')}
+              )
             </div>
           </div>
           <div>
             <div className={classes.label}>Cash:</div>
             <div className={classes.value}>
-              ${parseFloat(reduxAccount.cash).toLocaleString('en-US')}
+              ${parseFloat(reduxApp.account.cash).toLocaleString('en-US')}
             </div>
           </div>
           <div>
             <div className={classes.label}>Pattern day trader?</div>
-            <div className={classes.value}>{reduxAccount.pattern_day_trader ? 'YES' : 'NO'}</div>
+            <div className={classes.value}>
+              {reduxApp.account.pattern_day_trader ? 'YES' : 'NO'}
+            </div>
           </div>
           <div>
             <div className={classes.label}>Profit:</div>
-            <div className={classes.value}>${reduxApp.profit.toLocaleString('en-US')}</div>
+            <div className={classes.value}>
+              $
+              {reduxApp.data.sells
+                .reduce((acc, item) => acc + item.profit, 0)
+                .toLocaleString('en-US')}
+            </div>
           </div>
           <div>
             <div className={classes.label}>Current value:</div>
             <div className={classes.value}>
-              ${(positionsTotal + Number(reduxAccount.cash)).toLocaleString('en-US')}
+              ${(positionsTotal + Number(reduxApp.account.cash)).toLocaleString('en-US')}
             </div>
-          </div>
-          <div>
-            <div className={classes.label}>Open buy orders:</div>
-            <div className={classes.value}>{reduxApp.buyOrders.length}</div>
-          </div>
-          <div>
-            <div className={classes.label}>Open sell orders:</div>
-            <div className={classes.value}>{reduxApp.sellOrders.length}</div>
           </div>
         </div>
 
-        <ProfitsChart profits={reduxApp.profitData} />
+        <ProfitsChart profits={reduxApp.data.sells} />
       </div>
-      <h2>{reduxApp.positions.length} Positions:</h2>
+
+      <h2>{reduxApp.orders.length} Positions:</h2>
       <div className={classes.flexWrap}>
-        {reduxApp.positions
+        {reduxApp.orders
           .sort((a, b) => a.symbol.localeCompare(b.symbol))
           .map(position => (
             <Position
               key={position.id}
               data={position}
-              quote={reduxQuotes[position.symbol] ? reduxQuotes[position.symbol].bp : 0}
+              quote={
+                reduxApp.quotes.current[position.symbol]
+                  ? reduxApp.quotes.current[position.symbol].bp
+                  : 0
+              }
             />
           ))}
       </div>
+
       <h2>Prices:</h2>
       <div className={classes.flexWrap}>
-        {Object.keys(reduxQuotes)
+        {Object.keys(reduxApp.quotes.current)
           .sort((a, b) => a.localeCompare(b))
           .map(quote => (
             <Ticker
               key={quote}
-              quote={reduxQuotes[quote]}
-              history={{
-                '1min': reduxHistory['1min'][quote][0],
-                '5min': reduxHistory['5min'][quote][0],
-                '15min': reduxHistory['15min'][quote][0],
-                day: reduxHistory['day'][quote][0],
+              symbol={quote}
+              quote={{
+                '15min': reduxApp.quotes['15min'][quote],
+                '1min': reduxApp.quotes['1min'][quote],
+                '5min': reduxApp.quotes['5min'][quote],
+                current: reduxApp.quotes.current[quote],
+                day: reduxApp.quotes.day[quote],
               }}
             />
           ))}

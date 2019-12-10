@@ -3,8 +3,8 @@ import config from '../constants/config';
 
 const onConnect = () => {
   const listeners = [
-    'order_updates',
     'trade_updates',
+    'account_updates',
     ...config.ticker.map(ticker => `Q.${ticker}`),
   ];
   client.subscribe(listeners);

@@ -1,20 +1,29 @@
 export const initialState = {
-  app: {
-    ticks: 0,
-    buys: 0,
-    sells: 0,
-    buyTotal: 0,
-    sellTotal: 0,
-    profit: 0,
-    profitsData: {},
-    updated: null,
-    positions: [],
-    sellOrders: [],
-    buyOrders: [],
+  account: {
+    cash: '0',
+    pattern_day_trader: false,
   },
-  quotes: {},
-  history: {},
-  account: {},
+  clock: {
+    is_open: true,
+  },
+  data: {
+    buys: [],
+    sells: [],
+  },
+  isBuyInProgress: false,
+  orders: [],
+  profit: 0,
+  quotes: {
+    '15min': {},
+    '1min': {},
+    '5min': {},
+    current: {},
+    day: {},
+  },
+  sellId: null,
+  status: 'RUNNING',
+  ticks: 0,
+  updated: null,
 };
 
 export default initialState;

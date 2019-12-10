@@ -1,5 +1,5 @@
-const onAccountUpdate = account => {
-  console.log(`Account: ${account}`);
+const onAccountUpdate = () => {
+  console.log('ACCOUNT');
 };
 
 export default onAccountUpdate;

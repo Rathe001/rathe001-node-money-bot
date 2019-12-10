@@ -5,8 +5,8 @@ const onStockQuotes = (subject, data) => {
     (acc, item) => ({ ...acc, [item.sym]: item }),
     {},
   );
-  state.quotes = {
-    ...state.quotes,
+  state.quotes.current = {
+    ...state.quotes.current,
     ...jsonDataReduced,
   };
 };

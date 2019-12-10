@@ -1,8 +1,8 @@
 const actions = {
-  SET_DATA: 'ACCOUNT_SET_DATA',
+  SET_DATA: 'APP_SET_DATA',
   setData: data => ({
-    type: actions.SET_DATA,
     payload: data,
+    type: actions.SET_DATA,
   }),
 };
 

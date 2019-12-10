@@ -17,7 +17,7 @@ import analyzeData from './utils/analyzeData';
 
 function marketOpen() {
   if (!state.clock.is_open) {
-    state.app.status = 'CLOSED';
+    state.status = 'CLOSED';
   }
 
   return state.clock.is_open;
@@ -84,15 +84,10 @@ const api = app => {
     ];
 
     if (marketOpen()) {
-      state.app.status = 'RUNNING';
+      state.status = 'RUNNING';
       Promise.all(promises)
         .then(() => {
           analyzeData();
-          if (state.didTransaction) {
-            // eslint-disable-next-line no-console
-            console.log('');
-            state.didTransaction = false;
-          }
         })
         .catch(() => {});
     }
@@ -104,7 +99,7 @@ const api = app => {
     await storage.init();
     const persistedApp = await storage.getItem('app');
     if (persistedApp) {
-      state.app = persistedApp;
+      Object.assign(state, persistedApp);
     }
     connectWebsocket();
     doHistoryLookup();
