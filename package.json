@@ -40,7 +40,7 @@
     "@alpacahq/alpaca-trade-api": "^1.2.7",
     "@babel/preset-env": "^7.7.4",
     "@babel/register": "^7.7.4",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "babel-eslint": "^10.0.3",
     "body-parser": "^1.19.0",
     "chalk": "^3.0.0",
